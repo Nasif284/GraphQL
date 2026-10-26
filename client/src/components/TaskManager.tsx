@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_TASKS, GET_USERS } from '../apollo/graphql/queries';
 import { CREATE_TASK, UPDATE_TASK, DELETE_TASK } from '../apollo/graphql/mutations';
-import { Plus, Trash2, Filter, ChevronLeft, ChevronRight, Clock, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, Filter, ChevronLeft, ChevronRight, Clock, AlertCircle, Calendar, RotateCcw } from 'lucide-react';
 
 export const TaskManager: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>('');
@@ -147,6 +147,22 @@ export const TaskManager: React.FC = () => {
             }}
             className="bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg px-3 py-2 placeholder-slate-500 focus:outline-none focus:border-pink-500"
           />
+
+          {(statusFilter || priorityFilter || searchFilter) && (
+            <button
+              onClick={() => {
+                setStatusFilter('');
+                setPriorityFilter('');
+                setSearchFilter('');
+                setOffset(0);
+              }}
+              className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-700/60 transition"
+              title="Reset all filters"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset</span>
+            </button>
+          )}
         </div>
 
         <button
@@ -232,6 +248,18 @@ export const TaskManager: React.FC = () => {
                     {task.assignee?.name || <span className="italic text-slate-500">Unassigned</span>}
                   </span>
                 </div>
+                {task.createdAt && (
+                  <div className="flex items-center gap-1 text-[11px] text-slate-500 pt-0.5">
+                    <Calendar className="w-3 h-3 text-slate-500" />
+                    <span>
+                      {new Date(task.createdAt).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-2">
